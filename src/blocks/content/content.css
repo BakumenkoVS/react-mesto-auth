@@ -1,0 +1,14 @@
+.content {
+   display: block;
+   max-width: 880px;
+   width: 100%;
+   min-width: 320px;
+   box-sizing: border-box;
+   margin: 0 auto;
+}
+
+@media screen and (max-width: 1000px) {
+   .content {
+      padding: 0 19px;
+   }
+}
