@@ -1,17 +1,17 @@
-
-import React, { useState, useEffect } from "react";
-import Header from "./Header";
-import Main from "./Main";
-import Footer from "./Footer";
-import PopupWithForm from "./PopupWithForm";
-import ImagePopup from "./ImagePopup";
-import { api } from "../utils/Api.js";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
-import EditProfilePopup from "./EditProfilePopup";
-import EditAvatarPopup from "./EditAvatarPopup";
-import AddPlacePopup from "./AddPlacePopup";
-import ProtectedRoute from "./ProtectedRoute";
-import { Route, Router, Routes } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
+import PopupWithForm from './PopupWithForm';
+import ImagePopup from './ImagePopup';
+import { api } from '../utils/Api.js';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from './AddPlacePopup';
+import { ProtectedRoute } from './ProtectedRoute';
+import { Route, Routes } from 'react-router-dom';
+import Login from './Login';
 
 function App() {
    //States
@@ -26,6 +26,7 @@ function App() {
    //Card request and user information
    useEffect(() => {
       Promise.all([api.getCard(), api.getUserInfo()])
+
          .then(([card, user]) => {
             setCurrentUser(user);
             setCards(card);
@@ -106,17 +107,15 @@ function App() {
    return (
       <CurrentUserContext.Provider value={currentUser}>
          <div className="page">
-            
-            
-            <Router>
+            <Header />
+
             <Routes>
-               <Route path="/abs" element={<Header />}/>
+               <Route path="/sign-in" element={<Login loggedIn={loggedIn} />} />
                <Route
                   path="/"
                   element={
                      <ProtectedRoute>
                         <Main
-                           loggedIn={loggedIn}
                            onEditAvatar={handleEditAvatarClick}
                            onEditProfile={handleEditProfileClick}
                            onAddPlace={handleAddPlaceClick}
@@ -124,13 +123,13 @@ function App() {
                            onCardLike={handleCardLike}
                            onCardDelete={handleCardDelete}
                            onCards={cards}
+                           loggedIn={loggedIn}
                         />
                      </ProtectedRoute>
                   }
                />
             </Routes>
-            </Router>
-            
+
             <Footer />
             <EditProfilePopup
                isOpen={isEditProfilePopupOpen}

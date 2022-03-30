@@ -1,10 +1,6 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
-const ProtectedRoute = ({ children }) => {
-   
-   return true ? children : <Navigate to="/abs" />;
-   
+export const ProtectedRoute = ({ children }) => {
+   return children.props.loggedIn ? children : <Navigate to="/sign-in" />;
 };
-
-export default ProtectedRoute;
