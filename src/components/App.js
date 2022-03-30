@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Main from "./Main";
@@ -9,6 +10,8 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import ProtectedRoute from "./ProtectedRoute";
+import { Route, Router, Routes } from "react-router-dom";
 
 function App() {
    //States
@@ -18,7 +21,7 @@ function App() {
    const [selectedCard, setSelectedCard] = useState(null);
    const [currentUser, setCurrentUser] = useState(null);
    const [cards, setCards] = useState([]);
-   const [loggedIn, setLoggetIn] = useState(false);
+   const [loggedIn, setLoggetIn] = useState(true);
 
    //Card request and user information
    useEffect(() => {
@@ -103,16 +106,31 @@ function App() {
    return (
       <CurrentUserContext.Provider value={currentUser}>
          <div className="page">
-            <Header />
-            <Main
-               onEditAvatar={handleEditAvatarClick}
-               onEditProfile={handleEditProfileClick}
-               onAddPlace={handleAddPlaceClick}
-               onCardClick={handleCardClick}
-               onCardLike={handleCardLike}
-               onCardDelete={handleCardDelete}
-               onCards={cards}
-            />
+            
+            
+            <Router>
+            <Routes>
+               <Route path="/abs" element={<Header />}/>
+               <Route
+                  path="/"
+                  element={
+                     <ProtectedRoute>
+                        <Main
+                           loggedIn={loggedIn}
+                           onEditAvatar={handleEditAvatarClick}
+                           onEditProfile={handleEditProfileClick}
+                           onAddPlace={handleAddPlaceClick}
+                           onCardClick={handleCardClick}
+                           onCardLike={handleCardLike}
+                           onCardDelete={handleCardDelete}
+                           onCards={cards}
+                        />
+                     </ProtectedRoute>
+                  }
+               />
+            </Routes>
+            </Router>
+            
             <Footer />
             <EditProfilePopup
                isOpen={isEditProfilePopupOpen}
