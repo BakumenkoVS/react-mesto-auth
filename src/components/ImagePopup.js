@@ -1,7 +1,7 @@
 export default function ImagePopup({ onClose, card }) {
    return (
       <div
-         className={`popup popup_type_picture ${card && 'popup_opened'}`}
+         className={`popup popup_type_picture ${card && "popup_opened"}`}
          id="img"
       >
          <div className="popup__overlay" onClick={onClose} />
