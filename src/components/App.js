@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import Header from './Header';
-import Main from './Main';
-import Footer from './Footer';
-import PopupWithForm from './PopupWithForm';
-import ImagePopup from './ImagePopup';
-import { api } from '../utils/Api.js';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import EditProfilePopup from './EditProfilePopup';
-import EditAvatarPopup from './EditAvatarPopup';
-import AddPlacePopup from './AddPlacePopup';
-import { ProtectedRoute } from './ProtectedRoute';
-import { Route, Routes } from 'react-router-dom';
-import Login from './Login';
+import React, { useState, useEffect } from "react";
+import Header from "./Header";
+import Main from "./Main";
+import Footer from "./Footer";
+import PopupWithForm from "./PopupWithForm";
+import ImagePopup from "./ImagePopup";
+import { api } from "../utils/Api.js";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
+import AddPlacePopup from "./AddPlacePopup";
+import { ProtectedRoute } from "./ProtectedRoute";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
+import Login from "./Login";
+import Register from './Register';
 
 function App() {
    //States
@@ -108,9 +109,9 @@ function App() {
       <CurrentUserContext.Provider value={currentUser}>
          <div className="page">
             <Header />
-
             <Routes>
                <Route path="/sign-in" element={<Login loggedIn={loggedIn} />} />
+               <Route path="/sign-up" element={<Register loggedIn={loggedIn} />} />
                <Route
                   path="/"
                   element={
