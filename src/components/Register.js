@@ -28,7 +28,7 @@ export default function Register({ loggedIn }) {
                Зарегистрироваться
             </button>
             <p className="input_subtitle">
-               Уже зарегистрированы?{" "}
+               Уже зарегистрированы?
                <Link className="input_link" to="/sign-in">
                   Войти
                </Link>
