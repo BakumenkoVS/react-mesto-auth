@@ -4,7 +4,7 @@ import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
-import { api } from '../utils/Api.js';
+import { api, authApi } from '../utils/Api.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
@@ -22,14 +22,62 @@ function App() {
    const [selectedCard, setSelectedCard] = useState(null);
    const [currentUser, setCurrentUser] = useState(null);
    const [cards, setCards] = useState([]);
-   const [loggedIn, setLoggetIn] = useState(true);
+   const [loggedIn, setLoggedIn] = useState(false);
    const history = useNavigate();
+   const [userInfo, setUserInfo] = useState(null);
 
    useEffect(() => {
       if (loggedIn) {
          history('/');
       }
    }, [loggedIn]);
+
+   useEffect(() => {
+      tokenCheck();
+   }, []);
+
+   function handleRegister(password, email) {
+      debugger;
+      return authApi.signUp(password, email).then((res) => {
+         debugger;
+         history('/sign-in');
+         return res;
+      });
+   }
+
+   function handleLogin(password, email) {
+      debugger;
+      return authApi
+         .signIn(password, email)
+         .then((data) => {
+            debugger;
+            if (data.token) {
+               localStorage.setItem('jwt', data.token);
+               setUserInfo(email);
+               setLoggedIn(true);
+               history('/');
+            }
+         })
+         .then((res) => {
+            debugger;
+            return res;
+         })
+         .catch((err) => {
+            console.log('Це пизда');
+         });
+   }
+
+   function tokenCheck() {
+      if (localStorage.getItem('jwt')) {
+         let jwt = localStorage.getItem('jwt');
+         authApi.getContent(jwt).then((res) => {
+            if (res) {
+               setUserInfo(res.email);
+               setLoggedIn(true);
+            }
+         });
+      }
+   }
 
    //Card request and user information
    useEffect(() => {
@@ -117,10 +165,20 @@ function App() {
          <div className="page">
             <Header />
             <Routes>
-               <Route path="/sign-in" element={<Login loggedIn={loggedIn} />} />
+               <Route
+                  path="/sign-in"
+                  element={
+                     <Login handleLogin={handleLogin} loggedIn={loggedIn} />
+                  }
+               />
                <Route
                   path="/sign-up"
-                  element={<Register loggedIn={loggedIn} />}
+                  element={
+                     <Register
+                        handleRegister={handleRegister}
+                        loggedIn={loggedIn}
+                     />
+                  }
                />
                <Route
                   path="/"

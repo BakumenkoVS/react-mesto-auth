@@ -11,29 +11,37 @@ class Api {
       return Promise.reject(`Ошибка ${response.status}`);
    };
 
-   signUp(data) {
-      return (`${this._address}signup`,
-      {
+   signUp(password, email) {
+      return fetch(`${this._address}/signup`, {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
-            authorization: `Bearer ${localStorage.getItem('jwt')}`,
          },
-         body: JSON.stringify(data),
+         body: JSON.stringify({ password, email }),
       }).then(this._handleResponse);
    }
 
-   signIn(data) {
-      return (`${this._address}signin`,
-      {
+   signIn(password, email) {
+      debugger;
+      return fetch(`${this._address}/signin`, {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
-            authorization: `Bearer ${localStorage.getItem('jwt')}`,
          },
-         body: JSON.stringify(data),
+         body: JSON.stringify({ password, email }),
       }).then(this._handleResponse);
    }
+
+   getContent = (token) => {
+      return fetch(`${this._address}/users/me`, {
+         method: 'GET',
+         headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+         },
+      }).then(this._handleResponse);
+   };
 
    getUserInfo() {
       return fetch(`${this._address}users/me`, {
@@ -128,5 +136,5 @@ export const api = new Api({
 });
 
 export const authApi = new Api({
-   address: 'https://auth.nomoreparties.co/',
+   address: 'https://auth.nomoreparties.co',
 });
