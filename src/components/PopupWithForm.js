@@ -15,7 +15,7 @@ export default function PopupWithForm({
          }
       >
          <div className="popup__overlay" onClick={onClose} />
-         <div className="popup__conteiner">
+         <div className="popup__container">
             <h2 className="popup__title">{title}</h2>
             <form
                name={name}

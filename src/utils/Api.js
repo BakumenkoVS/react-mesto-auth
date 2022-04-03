@@ -22,7 +22,6 @@ class Api {
    }
 
    signIn(password, email) {
-      debugger;
       return fetch(`${this._address}/signin`, {
          method: 'POST',
          headers: {
@@ -36,7 +35,6 @@ class Api {
       return fetch(`${this._address}/users/me`, {
          method: 'GET',
          headers: {
-            Accept: 'application/json',
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
          },

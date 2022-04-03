@@ -17,7 +17,7 @@ export default function Login({ handleLogin }) {
 
    function handleSubmit(e) {
       e.preventDefault();
-      debugger;
+
       handleLogin(password, email);
    }
    return (

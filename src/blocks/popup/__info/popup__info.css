@@ -1,0 +1,23 @@
+.popup__info-title {
+   color: black;
+   font-weight: 900;
+   font-size: 24px;
+   line-height: 29px;
+   text-align: center;
+   margin: 0 0 24px 0;
+}
+
+.popup__info_icon {
+   margin: 0 auto 40px;
+   width: 120px;
+   height: 120px;
+   background-size: 100%;
+}
+
+.popup__info_icon-success {
+   background-image: url(../../../images/Union.png);
+}
+
+.popup__info_icon-error {
+   background-image: url(../../../images/error.png);
+}

@@ -1,6 +1,6 @@
-import logo from "../images/logo.svg";
-import { Link, Route, Routes } from "react-router-dom";
-export default function Header() {
+import logo from '../images/logo.svg';
+import { Link, Route, Routes } from 'react-router-dom';
+export default function Header({ signOut, userInfo }) {
    return (
       <header className="header">
          <img src={logo} alt="Места России" className="logo" />
@@ -25,9 +25,16 @@ export default function Header() {
             <Route
                path="/"
                element={
-                  <Link className="header_link" to="/sign-in">
-                     Выход
-                  </Link>
+                  <div>
+                     <span className="header_email">{userInfo}</span>
+                     <Link
+                        className="header_link"
+                        to="/sign-in"
+                        onClick={signOut}
+                     >
+                        Выход
+                     </Link>
+                  </div>
                }
             />
          </Routes>

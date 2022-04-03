@@ -13,6 +13,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
+import InfoTooltip from './InfoTooltip';
 
 function App() {
    //States
@@ -25,7 +26,8 @@ function App() {
    const [loggedIn, setLoggedIn] = useState(false);
    const history = useNavigate();
    const [userInfo, setUserInfo] = useState(null);
-
+   const [successPopupOpen, setSuccessPopupOpen] = useState(false);
+   const [errorPopupOpen, setErrorPopupOpen] = useState(false);
    useEffect(() => {
       if (loggedIn) {
          history('/');
@@ -37,33 +39,31 @@ function App() {
    }, []);
 
    function handleRegister(password, email) {
-      debugger;
-      return authApi.signUp(password, email).then((res) => {
-         debugger;
-         history('/sign-in');
-         return res;
-      });
+      return authApi
+         .signUp(password, email)
+         .then((res) => {
+            setSuccessPopupOpen(true);
+            history('/sign-in');
+         })
+         .catch((err) => {
+            setErrorPopupOpen(true);
+         });
    }
 
    function handleLogin(password, email) {
-      debugger;
       return authApi
          .signIn(password, email)
          .then((data) => {
-            debugger;
             if (data.token) {
                localStorage.setItem('jwt', data.token);
                setUserInfo(email);
+               console.log(email);
                setLoggedIn(true);
                history('/');
             }
          })
-         .then((res) => {
-            debugger;
-            return res;
-         })
-         .catch((err) => {
-            console.log('Це пизда');
+         .catch(() => {
+            setErrorPopupOpen(true);
          });
    }
 
@@ -72,11 +72,17 @@ function App() {
          let jwt = localStorage.getItem('jwt');
          authApi.getContent(jwt).then((res) => {
             if (res) {
-               setUserInfo(res.email);
+               setUserInfo(res.data.email);
+
                setLoggedIn(true);
             }
          });
       }
+   }
+
+   function signOut() {
+      localStorage.removeItem('jwt');
+      setLoggedIn(false);
    }
 
    //Card request and user information
@@ -112,6 +118,8 @@ function App() {
       setIsAddPlacePopupOpen(false);
       setIsEditProfilePopupOpen(false);
       setSelectedCard(null);
+      setErrorPopupOpen(false);
+      setSuccessPopupOpen(false);
    };
 
    const handleUpdateUser = (userInfo) => {
@@ -146,7 +154,7 @@ function App() {
       api.changeLikeCardStatus(card._id, !isLiked)
          .then((newCard) => {
             setCards((state) =>
-               state.map((c) => (c._id === card._id ? newCard : c))
+               state.map((c) => (c._id === card._id ? newCard : c)),
             );
          })
          .catch((err) => console.log(err));
@@ -155,7 +163,7 @@ function App() {
    function handleCardDelete(card) {
       api.deleteCard(card._id).then(() => {
          setCards((state) => state.filter((c) => c._id != card._id)).catch(
-            (err) => console.log(err)
+            (err) => console.log(err),
          );
       });
    }
@@ -163,7 +171,7 @@ function App() {
    return (
       <CurrentUserContext.Provider value={currentUser}>
          <div className="page">
-            <Header />
+            <Header signOut={signOut} userInfo={userInfo} />
             <Routes>
                <Route
                   path="/sign-in"
@@ -221,6 +229,31 @@ function App() {
             <PopupWithForm name="removal" title="Вы уверены?" />
 
             <ImagePopup onClose={closeAllPopups} card={selectedCard} />
+            <InfoTooltip
+               onClose={closeAllPopups}
+               isOpen={successPopupOpen}
+               children={
+                  <>
+                     <div className="popup__info_icon popup__info_icon-success"></div>
+                     <h1 className="popup__info-title">
+                        Вы успешно зарегистрировались!
+                     </h1>
+                  </>
+               }
+            />
+
+            <InfoTooltip
+               onClose={closeAllPopups}
+               isOpen={errorPopupOpen}
+               children={
+                  <>
+                     <div className="popup__info_icon popup__info_icon-error"></div>
+                     <h1 className="popup__info-title">
+                        Что-то пошло не так! Попробуйте ещё раз.
+                     </h1>
+                  </>
+               }
+            />
          </div>
       </CurrentUserContext.Provider>
    );
