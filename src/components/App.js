@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import Header from './Header';
-import Main from './Main';
-import Footer from './Footer';
-import PopupWithForm from './PopupWithForm';
-import ImagePopup from './ImagePopup';
-import { api, authApi } from '../utils/Api.js';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import EditProfilePopup from './EditProfilePopup';
-import EditAvatarPopup from './EditAvatarPopup';
-import AddPlacePopup from './AddPlacePopup';
-import { ProtectedRoute } from './ProtectedRoute';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import Login from './Login';
-import Register from './Register';
-import InfoTooltip from './InfoTooltip';
+import React, { useState, useEffect } from "react";
+import Header from "./Header";
+import Main from "./Main";
+import Footer from "./Footer";
+import PopupWithForm from "./PopupWithForm";
+import ImagePopup from "./ImagePopup";
+import { api, authApi } from "../utils/Api.js";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
+import AddPlacePopup from "./AddPlacePopup";
+import { ProtectedRoute } from "./ProtectedRoute";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import Login from "./Login";
+import Register from "./Register";
+import InfoTooltip from "./InfoTooltip";
 
 function App() {
    //States
@@ -26,11 +26,12 @@ function App() {
    const [loggedIn, setLoggedIn] = useState(false);
    const history = useNavigate();
    const [userInfo, setUserInfo] = useState(null);
-   const [successPopupOpen, setSuccessPopupOpen] = useState(false);
-   const [errorPopupOpen, setErrorPopupOpen] = useState(false);
+   const [infoToolTip, setInfoToolTip] = useState({});
+   const [infoToolTipOpen, setInfoToolTipOpen] = useState(false);
+
    useEffect(() => {
       if (loggedIn) {
-         history('/');
+         history("/");
       }
    }, [loggedIn]);
 
@@ -42,34 +43,25 @@ function App() {
       return authApi
          .signUp(password, email)
          .then((res) => {
-            setSuccessPopupOpen(true);
-            history('/sign-in');
+            setInfoToolTipOpen(true);
+            setInfoToolTip({
+               text: "Вы успешно зарегистрировались!",
+               class: "success",
+            });
+            history("/sign-in");
          })
          .catch((err) => {
-            setErrorPopupOpen(true);
-         });
-   }
-
-   function handleLogin(password, email) {
-      return authApi
-         .signIn(password, email)
-         .then((data) => {
-            if (data.token) {
-               localStorage.setItem('jwt', data.token);
-               setUserInfo(email);
-               console.log(email);
-               setLoggedIn(true);
-               history('/');
-            }
-         })
-         .catch(() => {
-            setErrorPopupOpen(true);
+            setInfoToolTip({
+               text: "Что-то пошло не так! Попробуйте ещё раз.",
+               class: "error",
+            });
+            setInfoToolTipOpen(true);
          });
    }
 
    function tokenCheck() {
-      if (localStorage.getItem('jwt')) {
-         let jwt = localStorage.getItem('jwt');
+      let jwt = localStorage.getItem("jwt");
+      if (jwt) {
          authApi.getContent(jwt).then((res) => {
             if (res) {
                setUserInfo(res.data.email);
@@ -80,21 +72,43 @@ function App() {
       }
    }
 
+   function handleLogin(password, email) {
+      return authApi
+         .signIn(password, email)
+         .then((data) => {
+            if (data.token) {
+               localStorage.setItem("jwt", data.token);
+               setUserInfo(email);
+               setLoggedIn(true);
+               history("/");
+            }
+         })
+         .catch(() => {
+            setInfoToolTip({
+               text: "Что-то пошло не так! Попробуйте ещё раз.",
+               class: "error",
+            });
+            setInfoToolTipOpen(true);
+         });
+   }
+
    function signOut() {
-      localStorage.removeItem('jwt');
+      localStorage.removeItem("jwt");
       setLoggedIn(false);
    }
 
    //Card request and user information
    useEffect(() => {
-      Promise.all([api.getCard(), api.getUserInfo()])
+      if (loggedIn) {
+         Promise.all([api.getCard(), api.getUserInfo()])
 
-         .then(([card, user]) => {
-            setCurrentUser(user);
-            setCards(card);
-         })
-         .catch((err) => console.log(err));
-   }, []);
+            .then(([card, user]) => {
+               setCurrentUser(user);
+               setCards(card);
+            })
+            .catch((err) => console.log(err));
+      }
+   }, [loggedIn]);
 
    //hendles
    function handleEditAvatarClick() {
@@ -118,8 +132,7 @@ function App() {
       setIsAddPlacePopupOpen(false);
       setIsEditProfilePopupOpen(false);
       setSelectedCard(null);
-      setErrorPopupOpen(false);
-      setSuccessPopupOpen(false);
+      setInfoToolTipOpen(false);
    };
 
    const handleUpdateUser = (userInfo) => {
@@ -162,7 +175,7 @@ function App() {
 
    function handleCardDelete(card) {
       api.deleteCard(card._id).then(() => {
-         setCards((state) => state.filter((c) => c._id != card._id)).catch(
+         setCards((state) => state.filter((c) => c._id !== card._id)).catch(
             (err) => console.log(err),
          );
       });
@@ -229,30 +242,11 @@ function App() {
             <PopupWithForm name="removal" title="Вы уверены?" />
 
             <ImagePopup onClose={closeAllPopups} card={selectedCard} />
-            <InfoTooltip
-               onClose={closeAllPopups}
-               isOpen={successPopupOpen}
-               children={
-                  <>
-                     <div className="popup__info_icon popup__info_icon-success"></div>
-                     <h1 className="popup__info-title">
-                        Вы успешно зарегистрировались!
-                     </h1>
-                  </>
-               }
-            />
 
             <InfoTooltip
                onClose={closeAllPopups}
-               isOpen={errorPopupOpen}
-               children={
-                  <>
-                     <div className="popup__info_icon popup__info_icon-error"></div>
-                     <h1 className="popup__info-title">
-                        Что-то пошло не так! Попробуйте ещё раз.
-                     </h1>
-                  </>
-               }
+               props={infoToolTip}
+               isOpen={infoToolTipOpen}
             />
          </div>
       </CurrentUserContext.Provider>
