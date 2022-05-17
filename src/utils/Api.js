@@ -1,6 +1,7 @@
 class Api {
    constructor({ address, token }) {
       this._address = address;
+      this._token = token;
    }
 
    _handleResponse = (response) => {
@@ -16,7 +17,6 @@ class Api {
          headers: {
             "Content-Type": "application/json",
          },
-         credentials: "include",
          body: JSON.stringify({ password, email }),
       }).then(this._handleResponse);
    }
@@ -27,7 +27,6 @@ class Api {
          headers: {
             "Content-Type": "application/json",
          },
-         credentials: "include",
          body: JSON.stringify({ password, email }),
       }).then(this._handleResponse);
    }
@@ -131,6 +130,7 @@ class Api {
 
 export const api = new Api({
    address: "https://api.mesto.bakumenko.nomoredomains.xyz",
+   token: localStorage.getItem("jwt"),
 });
 
 export const authApi = new Api({
