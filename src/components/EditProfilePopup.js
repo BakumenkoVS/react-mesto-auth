@@ -15,6 +15,15 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
       });
    }
 
+   function handleNameChange(event) {
+      setName(event.target.value)
+   }
+
+   function handleDescriptionChange(event) {
+      setDescription(event.target.value)
+   } 
+
+
    useEffect(() => {
       if (currentUser) {
          setName(currentUser.name);
@@ -37,7 +46,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
                   className="popup__input popup__input_value_name"
                   name="name"
                   value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  onChange={handleNameChange}
                   required=""
                   minLength={2}
                   maxLength={40}
@@ -52,7 +61,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
                   minLength={2}
                   maxLength={200}
                   value={description}
-                  onChange={(event) => setDescription(event.target.value)}
+                  onChange={handleDescriptionChange}
                />
                <span id="profession-error" className="error" />
             </fieldset>
