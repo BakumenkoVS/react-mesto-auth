@@ -30,14 +30,14 @@ function App() {
    const [infoToolTipOpen, setInfoToolTipOpen] = useState(false);
 
    useEffect(() => {
+      tokenCheck();
+   }, []);
+
+   useEffect(() => {
       if (loggedIn) {
          history("/");
       }
    }, [loggedIn]);
-
-   useEffect(() => {
-      tokenCheck();
-   }, []);
 
    function handleRegister(password, email) {
       return authApi
@@ -103,7 +103,7 @@ function App() {
          Promise.all([api.getCard(), api.getUserInfo()])
 
             .then(([card, user]) => {
-               setCurrentUser(user);
+               setCurrentUser(user.data);
                setCards(card);
             })
             .catch((err) => console.log(err));
@@ -138,7 +138,9 @@ function App() {
    const handleUpdateUser = (userInfo) => {
       api.addUserInfo(userInfo)
          .then((res) => {
-            setCurrentUser(res);
+            setCurrentUser((state) => {
+               return { ...state, ...res };
+            });
             setIsEditProfilePopupOpen(false);
          })
          .catch((err) => console.log(err));
@@ -147,7 +149,9 @@ function App() {
    const handleUpdateAvatar = (avatar) => {
       api.addAvatar(avatar)
          .then((res) => {
-            setCurrentUser(res);
+            setCurrentUser((state) => {
+               return { ...state, ...res };
+            });
             setIsEditAvatarPopupOpen(false);
          })
          .catch((err) => console.log(err));
@@ -163,7 +167,8 @@ function App() {
    };
 
    function handleCardLike(card) {
-      const isLiked = card.likes.some((i) => i._id === currentUser._id);
+      const isLiked = card.likes.some((i) => i === currentUser._id);
+
       api.changeLikeCardStatus(card._id, !isLiked)
          .then((newCard) => {
             setCards((state) =>

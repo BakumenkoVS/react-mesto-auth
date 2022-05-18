@@ -12,7 +12,6 @@ export default function Main({
    onCards,
 }) {
    const currentUser = useContext(CurrentUserContext);
-
    const items = () => {
       return onCards.map((card) => (
          <Card

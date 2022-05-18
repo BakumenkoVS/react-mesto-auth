@@ -42,26 +42,26 @@ class Api {
    };
 
    getUserInfo() {
-      return fetch(`${this._address}users/me`, {
+      return fetch(`${this._address}/users/me`, {
          headers: {
-            authorization: this._token,
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
          },
       }).then(this._handleResponse);
    }
 
    getCard() {
-      return fetch(`${this._address}cards`, {
+      return fetch(`${this._address}/cards`, {
          headers: {
-            authorization: this._token,
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
          },
       }).then(this._handleResponse);
    }
 
    addCards(data) {
-      return fetch(`${this._address}cards`, {
+      return fetch(`${this._address}/cards`, {
          method: "POST",
          headers: {
-            authorization: this._token,
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
             "Content-type": "application/json",
          },
          body: JSON.stringify(data),
@@ -69,10 +69,10 @@ class Api {
    }
 
    addUserInfo(data) {
-      return fetch(`${this._address}users/me`, {
+      return fetch(`${this._address}/users/me`, {
          method: "PATCH",
          headers: {
-            authorization: this._token,
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
             "Content-type": "application/json",
          },
          body: JSON.stringify(data),
@@ -80,37 +80,37 @@ class Api {
    }
 
    deleteCard(id) {
-      return fetch(`${this._address}cards/${id}`, {
+      return fetch(`${this._address}/cards/${id}`, {
          method: "DELETE",
          headers: {
-            authorization: this._token,
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
          },
       }).then(this._handleResponse);
    }
 
    addCardLike(cardId) {
-      return fetch(`${this._address}cards/${cardId}/likes`, {
+      return fetch(`${this._address}/cards/${cardId}/likes`, {
          method: "PUT",
          headers: {
-            authorization: this._token,
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
          },
       }).then(this._handleResponse);
    }
 
    deleteCardLike(cardId) {
-      return fetch(`${this._address}cards/${cardId}/likes`, {
+      return fetch(`${this._address}/cards/${cardId}/likes`, {
          method: "DELETE",
          headers: {
-            authorization: this._token,
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
          },
       }).then(this._handleResponse);
    }
 
    addAvatar(data) {
-      return fetch(`${this._address}users/me/avatar`, {
+      return fetch(`${this._address}/users/me/avatar`, {
          method: "PATCH",
          headers: {
-            authorization: this._token,
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
             "Content-type": "application/json",
          },
          body: JSON.stringify(data),
@@ -118,10 +118,10 @@ class Api {
    }
 
    changeLikeCardStatus(cardId, isLiked) {
-      return fetch(`${this._address}cards/${cardId}/likes`, {
+      return fetch(`${this._address}/cards/${cardId}/likes`, {
          method: isLiked ? "PUT" : "DELETE",
          headers: {
-            authorization: this._token,
+            authorization: `Bearer ${localStorage.getItem("jwt")}`,
             "Content-type": "application/json",
          },
       }).then(this._handleResponse);
